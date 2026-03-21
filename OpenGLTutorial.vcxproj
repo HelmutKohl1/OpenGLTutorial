@@ -140,7 +140,9 @@
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Shaders.cpp" />
+    <ClCompile Include="src\stb_image.cpp" />
     <ClCompile Include="src\Test.cpp" />
+    <ClCompile Include="src\Textures.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,11 +151,22 @@
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\Shaders.h" />
     <ClInclude Include="include\Test.h" />
+    <ClInclude Include="include\Textures.h" />
     <ClInclude Include="include\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\exercises2\fragment.fshader" />
     <None Include="res\exercises2\vertex.vshader" />
+    <None Include="res\textures\fragment.fshader">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="res\textures\vertex.vshader">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
