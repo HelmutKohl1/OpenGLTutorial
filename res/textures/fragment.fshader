@@ -7,9 +7,12 @@ out vec4 fragColour;
 
 // Samplers are the in-built GLSL way to pass the texture object to
 // the fragment shader
-uniform sampler2D ourTexture;
+uniform sampler2D texture1;
+uniform sampler2D texture2;
 
 void main(){
     // fragColour = vec4(ourColour, 1.0f);
-    fragColour = texture(ourTexture, TexCoord) * vec4(ourColour, 1.0f);
+
+    // third param means take 80% of param1, 20% of param2.
+    fragColour = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
 }
