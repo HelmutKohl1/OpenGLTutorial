@@ -14,5 +14,5 @@ void main(){
     // fragColour = vec4(ourColour, 1.0f);
 
     // third param means take 80% of param1, 20% of param2.
-    fragColour = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+    fragColour = mix(texture(texture1, TexCoord), texture(texture2, vec2(TexCoord.x, TexCoord.y)), 0.2);
 }
