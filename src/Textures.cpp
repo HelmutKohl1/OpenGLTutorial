@@ -51,6 +51,9 @@ int textures_main() {
 		1, 2, 3 // second triangle
 	};
 
+	float fraction = 0.5f;
+	float increment = 0.0001f;
+
 	// create shaders
 	std::filesystem::path workingdir = std::filesystem::current_path();
 	std::cout << workingdir;
@@ -108,11 +111,11 @@ int textures_main() {
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
 	// set the texture wrapping options
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	// set the texture filtering options
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
 	// load first texture resource
 	stbi_set_flip_vertically_on_load(true); // flip loaded texture on y axis
@@ -170,6 +173,21 @@ int textures_main() {
 	// render loop
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
+
+		// detect up/down arrow presses
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+			fraction += increment;
+			if (fraction >= 1.0f)
+				fraction = 1.0f;
+			std::cout << "up\n";
+		}
+		else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+			fraction -= increment;
+			if (fraction <= 0)
+				fraction = 0;
+			std::cout << "down\n";
+		}
+		shader.setFloat("fraction", fraction);
 
 		// activate the first texture unit
 		glActiveTexture(GL_TEXTURE0);
