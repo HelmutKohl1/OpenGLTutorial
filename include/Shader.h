@@ -59,35 +59,20 @@ public:
 		vertex = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertex, 1, &vShaderCode, NULL);
 		glCompileShader(vertex);
-		// check compilation
-		glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-		}
+		checkCompilationLinking(vertex, "VERTEX");
 
 		// fragment shader
 		fragment = glCreateShader(GL_FRAGMENT_SHADER);
 		glShaderSource(fragment, 1, &fShaderCode, NULL);
 		glCompileShader(fragment);
-		// check compilation
-		glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-		}
+		checkCompilationLinking(fragment, "FRAGMENT");
 
 		// shader program
 		ID = glCreateProgram();
 		glAttachShader(ID, vertex);
 		glAttachShader(ID, fragment);
 		glLinkProgram(ID);
-		// check linking
-		glGetProgramiv(ID, GL_LINK_STATUS, &success);
-		if (!success) {
-			glGetProgramInfoLog(ID, 512, NULL, infoLog);
-			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-		}
+		checkCompilationLinking(ID, "PROGRAM");
 
 		// delete the shaders as they're linked into the program and so no longer necessary
 		glDeleteShader(vertex);
@@ -112,6 +97,58 @@ public:
 		int location = glGetUniformLocation(ID, name.c_str());
 		glUniform1f(location, value);
 	}
+
+	void setVec2(std::string name, const glm::vec2& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniform2fv(location, 1, &value[0]);
+	}
+
+	void setVec3(std::string name, const glm::vec3& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniform3fv(location, 1, &value[0]);
+	}
+
+	void setVec4(std::string name, const glm::vec4& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniform4fv(location, 1, &value[0]);
+	}
+
+	void setMat2(std::string name, const glm::mat2& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniformMatrix2fv(location, 1, GL_FALSE, &value[0][0]);
+	}
+
+	void setMat3(std::string name, const glm::mat3& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniformMatrix3fv(location, 1, GL_FALSE, &value[0][0]);
+	}
+
+	void setMat4(std::string name, const glm::mat4& value) const {
+		int location = glGetUniformLocation(ID, name.c_str());
+		glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+	}
+
+	private:
+		void checkCompilationLinking(GLuint shader, std::string type) {
+			int success = 0;
+			char infoLog[512];
+			if (type != "PROGRAM") {
+				// check compilation
+				glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+				if (!success) {
+					glGetShaderInfoLog(shader, 512, NULL, infoLog);
+					std::cout << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n" << infoLog << std::endl;
+				}
+			}
+			else {
+				// check linking
+				glGetProgramiv(shader, GL_LINK_STATUS, &success);
+				if (!success) {
+					glGetProgramInfoLog(ID, 512, NULL, infoLog);
+					std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+				}
+			}
+		}
 }; 
 
 #endif // !SHADER_H
