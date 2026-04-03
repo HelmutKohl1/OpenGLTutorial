@@ -2,6 +2,10 @@
 #include <GLFW/glfw3.h>
 #include "stb_image/stb_image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Utils.h"
 #include "Shader.h"
 
@@ -56,7 +60,6 @@ int textures_main() {
 
 	// create shaders
 	std::filesystem::path workingdir = std::filesystem::current_path();
-	std::cout << workingdir;
 	std::filesystem::path shaderSourceDir = workingdir / "res" / "textures";
 	std::filesystem::path vertexSource = shaderSourceDir / "vertex.vshader";
 	std::filesystem::path fragmentSource = shaderSourceDir / "fragment.fshader";
@@ -170,6 +173,28 @@ int textures_main() {
 	glUniform1i(glGetUniformLocation(shader.ID, "texture1"), 0);
 	shader.setInt("texture2", 1); // equivalent to the above
 
+	// transformations
+
+	// translation
+	glm::vec4 vector(1.0f, 0.0f, 0.0f, 1.0f);
+	glm::mat4 trans_mat = glm::mat4(1.0f);
+	trans_mat = glm::translate(trans_mat, glm::vec3(1.0f, 1.0f, 0.0f));
+	vector = trans_mat * vector;
+	std::cout << vector.x << vector.y << vector.x << std::endl;
+
+	// rotation & scaling
+	glm::mat4 trans2 = glm::mat4(1.0f);
+	trans2 = glm::rotate(trans2, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); // rotate 90deg about z-axis
+	trans2 = glm::scale(trans2, glm::vec3(0.5, 0.5, 0.5));
+
+	// translate to bottom-right corner
+	glm::mat4 trans3 = glm::mat4(1.0f);
+	trans3 = glm::translate(trans3, glm::vec3(0.5f, -0.5f, 0.0f));
+
+	// send transformation to vertex shader
+	unsigned transformUniformLocation = glGetUniformLocation(shader.ID, "transform");
+	glUniformMatrix4fv(transformUniformLocation, 1, GL_FALSE, glm::value_ptr(trans2));
+
 	// render loop
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
@@ -188,6 +213,10 @@ int textures_main() {
 			std::cout << "down\n";
 		}
 		shader.setFloat("fraction", fraction);
+
+		// rotate image
+		trans3 = glm::rotate_slow(trans3, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(transformUniformLocation, 1, GL_FALSE, glm::value_ptr(trans3));
 
 		// activate the first texture unit
 		glActiveTexture(GL_TEXTURE0);
