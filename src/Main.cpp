@@ -3,7 +3,8 @@
 #include "Shaders.h"
 #include "Exercises2.h"
 #include "Textures.h"
+#include "Exercises3.h"
 
 int main() {
-	textures_main();
+	exercises3_main();
 }
